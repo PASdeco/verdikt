@@ -1,0 +1,23 @@
+# Secrets — never commit real keys or local env.
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+
+# Next.js
+.next/
+out/
+tsconfig.tsbuildinfo
+
+# GenLayer / Python tooling output
+artifacts/
+.pytest_cache/
+__pycache__/
+*.pyc
+
+# Logs + local tooling
+*.log
+.next/dev/
+.vercel/

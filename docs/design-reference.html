@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Verdikt</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,500&family=Hanken+Grotesk:wght@400;500;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}a:hover{color:{{accent}}}
+button{font-family:inherit;cursor:pointer}
+</style>
+</helmet>
+<div style="font-family:'Hanken Grotesk',sans-serif;background:#0A0A0B;color:#EDEBE6;line-height:1.5">
+
+<header style="max-width:1280px;margin:0 auto;padding:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;font-size:14px;font-weight:700;letter-spacing:.04em;text-transform:uppercase">
+<nav style="display:flex;gap:28px"><a href="#board">Board</a><a href="#rubric">Rubric</a><a href="#roles">Roles</a></nav>
+<div style="font-family:'Fraunces',serif;font-size:30px;font-weight:700;text-transform:none;letter-spacing:-.02em">Verdikt<span style="color:{{accent}}">.</span></div>
+<button style="background:transparent;color:#EDEBE6;border:1.5px solid #EDEBE6;border-radius:4px;padding:11px 20px;font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;min-height:44px">Connect wallet</button>
+</header>
+
+<section style="max-width:1280px;margin:0 auto;padding:64px 24px 40px;text-align:center">
+<div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:{{accent}};letter-spacing:.12em;text-transform:uppercase;margin-bottom:28px">Contest judging · on-chain · open record</div>
+<h1 style="font-family:'Fraunces',serif;font-weight:500;font-size:clamp(52px,9vw,116px);line-height:.96;letter-spacing:-.035em;margin:0 auto 32px;max-width:1100px">And the winner is <em style="color:{{accent}}">provably</em> fair.</h1>
+<p style="font-size:20px;color:#A9A59C;max-width:640px;margin:0 auto 40px">Set the rubric, lock the prize, and let independent validators score every entry. The ranking, and the reasons behind it, stay public.</p>
+<div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+<button style="background:{{accent}};color:#0A0A0B;border:0;border-radius:4px;padding:16px 32px;font-size:15px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;min-height:52px">Launch a contest</button>
+<button style="background:transparent;color:#EDEBE6;border:1.5px solid #5A574F;border-radius:4px;padding:14px 30px;font-size:15px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;min-height:52px">Browse live contests</button>
+</div>
+</section>
+
+<section id="board" style="max-width:1280px;margin:0 auto;padding:40px 24px 96px">
+<div style="border:1px solid #2B2A27;border-radius:6px;overflow-x:auto;background:#111112">
+<div style="min-width:760px">
+<div style="display:flex;justify-content:space-between;padding:18px 28px;border-bottom:1px solid #2B2A27;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#8C887E;letter-spacing:.1em;text-transform:uppercase"><span>[CONTEST NAME] · Judging</span><span>Prize pool [AMOUNT]</span></div>
+<div style="display:grid;grid-template-columns:56px 1.4fr repeat(3,1fr) 90px;gap:20px;padding:12px 28px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8C887E;letter-spacing:.1em;text-transform:uppercase"><span>#</span><span>Entry</span><span>[Criterion 1]</span><span>[Criterion 2]</span><span>[Criterion 3]</span><span style="text-align:right">Total</span></div>
+<div style="display:grid;grid-template-columns:56px 1.4fr repeat(3,1fr) 90px;gap:20px;align-items:center;padding:20px 28px;border-top:1px solid #2B2A27;background:#1A1411">
+<span style="font-family:'Fraunces',serif;font-size:34px;color:{{accent}}">1</span><span style="font-weight:700;font-size:17px">[ENTRY A]</span>
+<div style="height:6px;background:#2B2A27"><div style="width:92%;height:6px;background:{{accent}}"></div></div><div style="height:6px;background:#2B2A27"><div style="width:84%;height:6px;background:{{accent}}"></div></div><div style="height:6px;background:#2B2A27"><div style="width:88%;height:6px;background:{{accent}}"></div></div>
+<span style="font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:20px;text-align:right">[00.0]</span></div>
+<div style="display:grid;grid-template-columns:56px 1.4fr repeat(3,1fr) 90px;gap:20px;align-items:center;padding:20px 28px;border-top:1px solid #2B2A27">
+<span style="font-family:'Fraunces',serif;font-size:34px;color:#8C887E">2</span><span style="font-weight:700;font-size:17px">[ENTRY B]</span>
+<div style="height:6px;background:#2B2A27"><div style="width:78%;height:6px;background:#8C887E"></div></div><div style="height:6px;background:#2B2A27"><div style="width:90%;height:6px;background:#8C887E"></div></div><div style="height:6px;background:#2B2A27"><div style="width:70%;height:6px;background:#8C887E"></div></div>
+<span style="font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:20px;text-align:right">[00.0]</span></div>
+<div style="display:grid;grid-template-columns:56px 1.4fr repeat(3,1fr) 90px;gap:20px;align-items:center;padding:20px 28px;border-top:1px solid #2B2A27">
+<span style="font-family:'Fraunces',serif;font-size:34px;color:#8C887E">3</span><span style="font-weight:700;font-size:17px">[ENTRY C]</span>
+<div style="height:6px;background:#2B2A27"><div style="width:66%;height:6px;background:#8C887E"></div></div><div style="height:6px;background:#2B2A27"><div style="width:72%;height:6px;background:#8C887E"></div></div><div style="height:6px;background:#2B2A27"><div style="width:80%;height:6px;background:#8C887E"></div></div>
+<span style="font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:20px;text-align:right">[00.0]</span></div>
+</div></div>
+<p style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#8C887E;margin:14px 4px 0">Sample board. Live scores come from validator consensus.</p>
+</section>
+
+<section id="rubric" style="background:#EDEBE6;color:#151515">
+<div style="max-width:1280px;margin:0 auto;padding:112px 24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:64px">
+<div>
+<div style="font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#9A2E12;margin-bottom:20px">The method</div>
+<h2 style="font-family:'Fraunces',serif;font-weight:500;font-size:clamp(40px,5vw,64px);line-height:1;letter-spacing:-.03em;margin:0">The rubric is the product.</h2>
+</div>
+<div>
+<div style="display:grid;grid-template-columns:64px 1fr;gap:16px;padding:28px 0;border-top:1.5px solid #151515"><span style="font-family:'Fraunces',serif;font-size:36px;color:#9A2E12">1</span><div><h3 style="margin:0 0 6px;font-size:22px">Write it once, lock it</h3><p style="margin:0;color:#4A4843">Weighted criteria are fixed on-chain before the first entry, so nobody can move the goalposts.</p></div></div>
+<div style="display:grid;grid-template-columns:64px 1fr;gap:16px;padding:28px 0;border-top:1.5px solid #151515"><span style="font-family:'Fraunces',serif;font-size:36px;color:#9A2E12">2</span><div><h3 style="margin:0 0 6px;font-size:22px">Validators read every entry</h3><p style="margin:0;color:#4A4843">Each one opens the submitted link and scores it per criterion with written reasons.</p></div></div>
+<div style="display:grid;grid-template-columns:64px 1fr;gap:16px;padding:28px 0;border-top:1.5px solid #151515;border-bottom:1.5px solid #151515"><span style="font-family:'Fraunces',serif;font-size:36px;color:#9A2E12">3</span><div><h3 style="margin:0 0 6px;font-size:22px">Consensus pays out</h3><p style="margin:0;color:#4A4843">When validators agree on the ranking, the contract releases the prize to the winner.</p></div></div>
+</div></div>
+</section>
+
+<section style="background:{{accent}};color:#0A0A0B">
+<div style="max-width:1280px;margin:0 auto;padding:96px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:32px">
+<h2 style="font-family:'Fraunces',serif;font-weight:500;font-size:clamp(36px,5vw,68px);line-height:1;letter-spacing:-.03em;margin:0;max-width:760px">Every score. Every reason. On the record.</h2>
+<button style="background:#0A0A0B;color:#EDEBE6;border:0;border-radius:4px;padding:16px 32px;font-size:15px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;min-height:52px">Contest an outcome</button>
+</div>
+</section>
+
+<section id="roles" style="max-width:1280px;margin:0 auto;padding:104px 24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
+<div style="padding:8px 32px 8px 0;border-top:1px solid #5A574F"><div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:{{accent}};letter-spacing:.12em;margin:20px 0 12px">ORGANIZERS</div><p style="margin:0;font-size:19px;color:#C9C5BB">Launch hackathons, design contests and writing prizes with a rubric the whole world can inspect.</p></div>
+<div style="padding:8px 32px;border-top:1px solid #5A574F"><div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:{{accent}};letter-spacing:.12em;margin:20px 0 12px">CREATORS</div><p style="margin:0;font-size:19px;color:#C9C5BB">Enter once, see exactly how each criterion scored, and appeal when you think a ruling is wrong.</p></div>
+<div style="padding:8px 0 8px 32px;border-top:1px solid #5A574F"><div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:{{accent}};letter-spacing:.12em;margin:20px 0 12px">VALIDATORS</div><p style="margin:0;font-size:19px;color:#C9C5BB">Independent judges whose reasoning is published next to every score they give.</p></div>
+</section>
+
+<footer style="border-top:1px solid #2B2A27;padding:48px 24px 40px;text-align:center;overflow:hidden">
+<div style="font-family:'Fraunces',serif;font-weight:700;font-size:clamp(64px,16vw,220px);line-height:.9;letter-spacing:-.05em;color:#1B1B1D">Verdikt</div>
+<p style="font-size:13px;color:#8C887E;margin:20px 0 0">Prototype on GenLayer StudioNet. No real funds.</p>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#F2542D"},"$preview":{"width":1360,"height":2100}}'>
+class Component extends DCLogic {
+renderVals() {
+return { accent: this.props.accent ?? '#F2542D' };
+}
+}
+</script>
+</body>
+</html>
