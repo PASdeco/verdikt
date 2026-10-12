@@ -344,10 +344,20 @@ class VerdiktContest(gl.Contract):
             raise gl.vm.UserError("[EXPECTED] Appeal window is still open.")
         if int(contest.prize_claimed) == 1:
             raise gl.vm.UserError("[EXPECTED] Prize already claimed.")
-        if int(contest.winner_entry_id) == 0:
-            raise gl.vm.UserError("[EXPECTED] No winner for this contest.")
-        winner = self.entries[u64(int(contest.winner_entry_id))]
         caller = str(gl.message.sender_address).strip().lower()
+        if int(contest.winner_entry_id) == 0:
+            if caller != contest.organizer:
+                raise gl.vm.UserError("[EXPECTED] Only the organizer can reclaim.")
+            amount = contest.prize_wei
+            if amount > self.balance:
+                raise gl.vm.UserError("[EXPECTED] Contract balance is insufficient.")
+            self._pay_to(contest.organizer, amount)
+            contest.prize_claimed = u64(1)
+            self._append_log(contest, "FINALIZED", "PAID", now)
+            contest.status = "PAID"
+            self.contests[cid] = contest
+            return {"paid_to": contest.organizer, "amount_wei": int(amount), "refunded": True, "contest": self._contest_view(contest)}
+        winner = self.entries[u64(int(contest.winner_entry_id))]
         if caller != winner.creator and caller != contest.organizer:
             raise gl.vm.UserError("[EXPECTED] Only the winner or organizer can claim.")
         amount = contest.prize_wei
@@ -358,7 +368,7 @@ class VerdiktContest(gl.Contract):
         self._append_log(contest, "FINALIZED", "PAID", now)
         contest.status = "PAID"
         self.contests[cid] = contest
-        return {"paid_to": winner.creator, "amount_wei": int(amount), "contest": self._contest_view(contest)}
+        return {"paid_to": winner.creator, "amount_wei": int(amount), "refunded": False, "contest": self._contest_view(contest)}
     @gl.public.write
     def cancel_contest(self, contest_id: int) -> typing.Any:
         cid = u64(int(contest_id))

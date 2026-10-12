@@ -398,3 +398,47 @@ def test_non_organizer_cannot_judge(direct_vm, direct_deploy, direct_alice, dire
     # Organizer can.
     direct_vm.sender = direct_alice
     assert c.judge_entry(1)["status"] == "SCORED"
+def test_no_winner_organizer_reclaims_prize(direct_vm, direct_deploy, direct_alice, direct_bob):
+    direct_vm.mock_web(r'.*', {'status': 404, 'body': ''})
+    direct_vm.mock_llm(r'.*', score_json())
+    c = deploy(direct_deploy)
+    direct_vm.sender = direct_alice
+    create_contest(direct_vm, c, max_entries=2)
+    direct_vm.deal(direct_vm._contract_address, ONE_GEN)
+    direct_vm.sender = direct_bob
+    c.submit_entry(1, 'https://example.com/dead-1')
+    direct_vm.sender = direct_alice
+    c.submit_entry(1, 'https://example.com/dead-2')
+    c.close_entries(1)
+    c.judge_entry(1)
+    c.judge_entry(2)
+    finalized = c.finalize(1)
+    assert finalized['winner_entry_id'] == 0
+    later = (datetime.now(timezone.utc) + timedelta(days=4)).isoformat()
+    direct_vm.warp(later)
+    out = c.claim_prize(1)
+    assert out['refunded'] is True
+    assert out['paid_to'] == addr_hex(direct_alice)
+    assert c.get_contest(1)['status'] == 'PAID'
+
+
+def test_no_winner_stranger_cannot_reclaim(direct_vm, direct_deploy, direct_alice, direct_bob, direct_charlie):
+    direct_vm.mock_web(r'.*', {'status': 404, 'body': ''})
+    direct_vm.mock_llm(r'.*', score_json())
+    c = deploy(direct_deploy)
+    direct_vm.sender = direct_alice
+    create_contest(direct_vm, c, max_entries=2)
+    direct_vm.deal(direct_vm._contract_address, ONE_GEN)
+    direct_vm.sender = direct_bob
+    c.submit_entry(1, 'https://example.com/dead-1')
+    direct_vm.sender = direct_alice
+    c.submit_entry(1, 'https://example.com/dead-2')
+    c.close_entries(1)
+    c.judge_entry(1)
+    c.judge_entry(2)
+    c.finalize(1)
+    later = (datetime.now(timezone.utc) + timedelta(days=4)).isoformat()
+    direct_vm.warp(later)
+    direct_vm.sender = direct_charlie
+    with pytest.raises(Exception, match='Only the organizer can reclaim'):
+        c.claim_prize(1)
