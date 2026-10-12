@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+:root[data-theme="dark"] {
+  --bg: #0a0a0b;  --surface: #111112;
+  --surface-raised: #1a1411;
+  --band: #edebe6;
+  --band-ink: #151515;
+  --border: #2b2a27;
+  --ink: #edebe6;
+  --ink-muted: #a9a59c;
+  --accent: #f2542d;
+  --accent-text: #f2542d;
+  --accent-ink: #0a0a0b;
+  --danger: #f2877f;
+  --wordmark: #1b1b1d;
+}
+
+:root[data-theme="light"] {
+  --bg: #f5f3ee;
+  --surface: #ffffff;
+  --surface-raised: #fbefe9;
+  --band: #0a0a0b;
+  --band-ink: #edebe6;
+  --border: #d6d2c8;
+  --ink: #151515;
+  --ink-muted: #4a4843;
+  --accent: #f2542d;
+  --accent-text: #9a2e12;
+  --accent-ink: #0a0a0b;
+  --danger: #b3261e;
+  --wordmark: #e3ddd2;
+}
+
+html {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+body {
+  margin: 0;
+  font-family: "Hanken Grotesk", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.font-display { font-family: "Fraunces", serif; }
+.font-mono2 { font-family: "IBM Plex Mono", monospace; }
+
+.btn {
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 800;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 20px;
+  font-size: 13px;
+}
+.btn-hero { min-height: 52px; padding: 16px 32px; font-size: 15px; }
+.btn-accent { background: var(--accent); color: var(--accent-ink); border: 0; }
+.btn-ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--border); }
+.btn-dark { background: #0a0a0b; color: #edebe6; border: 0; }
+:root[data-theme="light"] .btn-dark { background: #edebe6; color: #0a0a0b; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Form controls: always legible in both themes.
+   Dark mode text is dim white (#EDEBE6); light mode is near-black. */
+:root[data-theme="dark"] { color-scheme: dark; }
+:root[data-theme="light"] { color-scheme: light; }
+
+input, textarea, select {
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--ink-muted);
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
