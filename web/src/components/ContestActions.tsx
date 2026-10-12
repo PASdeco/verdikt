@@ -15,6 +15,9 @@ export interface ContestSummary {
   entryCount: number;
   maxEntries: number;
   entryDeadline: number;
+  winnerEntryId: number;
+  appealDeadline: number;
+  prizeWei: number;
 }
 
 export interface EntrySummary {
@@ -163,9 +166,19 @@ export function ContestActions({ contest, entries }: { contest: ContestSummary; 
           </button>
         )}
         {contest.status === "FINALIZED" && (
-          <button className="btn btn-accent" onClick={() => void run("Claiming prize", (c) => claimPrizeWrite(c.provider, c.address, contest.id))}>
-            Claim prize
-          </button>
+          <div>
+            <button className="btn btn-accent" onClick={() => void run(contest.winnerEntryId === 0 ? "Reclaiming prize" : "Claiming prize", (c) => claimPrizeWrite(c.provider, c.address, contest.id))}>
+              {contest.winnerEntryId === 0 ? "Reclaim prize (no winner)" : "Claim prize"}
+            </button>
+            <div style={{ fontSize: 12, color: "var(--ink-muted)", marginTop: 6, maxWidth: 300 }}>
+              {(() => {
+                const w = entries.find((e) => e.id === contest.winnerEntryId);
+                if (!w) return "No winner — only the organizer wallet can reclaim the locked prize. Nobody else can touch it.";
+                const notYet = Date.now() / 1000 <= contest.appealDeadline;
+                return `Payout of ${(contest.prizeWei / 1e18).toFixed(2)} GEN always goes to the winner (${w.creator.slice(0, 6)}…${w.creator.slice(-4)}). Only the winner or organizer wallet can trigger it.${notYet ? " Still in appeal window — the contract will reject early claims." : ""}`;
+              })()}
+            </div>
+          </div>
         )}
         {(contest.status === "OPEN" || contest.status === "CLOSED") && (
           <div>

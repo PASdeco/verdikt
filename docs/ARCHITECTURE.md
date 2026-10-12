@@ -7,7 +7,7 @@
 - JUDGING: organizer runs `judge_entry` per entry (organizer-only); entries scored one tx at a time.
 - SCORED: `scored_count == entry_count` (SCORABLE + UNSCORABLE both count).
 - FINALIZED: `finalize` computed weighted totals + winner; sets 3-day `appeal_deadline`.
-- PAID: `claim_prize` after appeal window, once.
+- PAID: `claim_prize` after appeal window, once. Winner-or-organizer triggers; funds always go to the winner. No-winner contests (nothing scorable): only the organizer can reclaim the locked prize — otherwise it would sit stuck forever.
 - CANCELLED: organizer cancels empty contest; prize refunded.
 
 Activity log per contest records every transition with timestamp + actor.

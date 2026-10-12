@@ -2,9 +2,9 @@
 
 ## Contract (StudioNet)
 
-**Live:** `0x349A02aA5C3f5646793447473dcFEa2EA40B39a9`
-(deploy tx `0x74dd3ce15893e606944bdbe23aabdf0d8df9f7d2be2393083771abc3cd55f817`, ACCEPTED; verified with `scripts/verify-live.mjs` — `get_stats` responds.)
-Superseded: `0xA002306700390d24C1b24b372f006C0956edB2a3` (pre-permission-fix build; do not use).
+**Live:** `0xc5D08c126e407e5a7dA74E639De07E18155A1b6A`
+(deploy tx `0x9422b89b10e5f60d1209cdadfad1f99611c258ce536fb5c2c1a1a93d76255cfc`, ACCEPTED; verified with `scripts/verify-live.mjs` — `get_stats` responds.)
+Superseded: `0x349A02aA5C3f5646793447473dcFEa2EA40B39a9` (no no-winner refund), `0xA002306700390d24C1b24b372f006C0956edB2a3` (permissionless build); do not use.
 1. `cp .env.example .env` — set `BACKEND_PRIVATE_KEY` (dedicated, funded GEN), `GENLAYER_NETWORK=studionet`.
 2. `python scripts/lint_contract.py contracts/verdikt_contest.py` — must be ok.
 3. `python -m pytest tests/direct -q` — 20 tests.
