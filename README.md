@@ -6,6 +6,8 @@
 
 Prototype on **GenLayer StudioNet**. No real funds.
 
+**Live app:** `https://gen-verdikt.vercel.app/`
+
 ## Live deployment
 
 | | |

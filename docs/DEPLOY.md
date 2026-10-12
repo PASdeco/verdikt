@@ -15,5 +15,10 @@ Superseded: `0x349A02aA5C3f5646793447473dcFEa2EA40B39a9` (no no-winner refund), 
 Network: RPC `https://studio.genlayer.com/api`, chain 61999, explorer `https://explorer-studio.genlayer.com`.
 
 ## Frontend (Vercel)
+
+**Live:** `https://gen-verdikt.vercel.app/` (project `gen-verdikt`, production deploys from `web/`).
 - Root: `web/`. Env: `NEXT_PUBLIC_GENLAYER_RPC`, `NEXT_PUBLIC_GENLAYER_CHAIN_ID=61999`, `NEXT_PUBLIC_GENLAYER_EXPLORER`, `NEXT_PUBLIC_VERDIKT_CONTRACT_ADDRESS`, `NEXT_PUBLIC_APP_URL`, `MOCK_MODE`.
 - `npm install && npm run build`. Deploy `web/` to Vercel. No secrets in client bundle (`BACKEND_PRIVATE_KEY` never prefixed with NEXT_PUBLIC_).
+- Project must have framework preset `nextjs` (CLI-created projects default to null → pages 404 while static assets serve; set via API/portal and redeploy).
+- Disable Deployment Protection (`ssoProtection: null`) or the public URLs serve a login challenge.
+- Production env vars are stored on the project; `NEXT_PUBLIC_*` bakes at build time, so redeploy after any env change.
