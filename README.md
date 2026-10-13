@@ -12,7 +12,7 @@ Prototype on **GenLayer StudioNet**. No real funds.
 
 | | |
 |---|---|
-| Contract | `0xc5D08c126e407e5a7dA74E639De07E18155A1b6A` |
+| Contract | `0xf67737Ce93A727BC59f41f753565BCFaFA02AcB9` |
 | Network | StudioNet · chain `61999` |
 | RPC | `https://studio.genlayer.com/api` |
 | Explorer | `https://explorer-studio.genlayer.com` |

@@ -43,8 +43,8 @@ class VerdiktContest(gl.Contract):
     owner: Address
     contest_count: u64
     entry_count: u64
-    contests: TreeMap[u64, ContestRecord]
-    entries: TreeMap[u64, EntryRecord]
+    contests: TreeMap[str, ContestRecord]
+    entries: TreeMap[str, EntryRecord]
     def __init__(self):
         self.owner = gl.message.sender_address
         self.contest_count = u64(0)
@@ -92,15 +92,15 @@ class VerdiktContest(gl.Contract):
             prize_claimed=u64(0),
             logs_json=json.dumps([{"from": "", "to": "OPEN", "ts": now, "by": organizer}]),
         )
-        self.contests[cid] = record
+        self.contests[str(int(cid))] = record
         self.contest_count = cid
         return self._contest_view(record)
     @gl.public.write
     def submit_entry(self, contest_id: int, url: str) -> typing.Any:
         cid = u64(int(contest_id))
-        if cid not in self.contests:
+        if str(int(cid)) not in self.contests:
             raise gl.vm.UserError("[EXPECTED] Contest not found.")
-        contest = self.contests[cid]
+        contest = self.contests[str(int(cid))]
         if contest.status != "OPEN":
             raise gl.vm.UserError("[EXPECTED] Contest is not open for entries.")
         now = self._now()
@@ -128,17 +128,17 @@ class VerdiktContest(gl.Contract):
             resubmissions=u64(0),
             last_judged_at=u64(0),
         )
-        self.entries[eid] = record
+        self.entries[str(int(eid))] = record
         self.entry_count = eid
         contest.entry_count = u64(int(contest.entry_count) + 1)
-        self.contests[cid] = contest
+        self.contests[str(int(cid))] = contest
         return self._entry_view(record)
     @gl.public.write
     def close_entries(self, contest_id: int) -> typing.Any:
         cid = u64(int(contest_id))
-        if cid not in self.contests:
+        if str(int(cid)) not in self.contests:
             raise gl.vm.UserError("[EXPECTED] Contest not found.")
-        contest = self.contests[cid]
+        contest = self.contests[str(int(cid))]
         if contest.status != "OPEN":
             raise gl.vm.UserError("[EXPECTED] Contest is not open.")
         caller = str(gl.message.sender_address).strip().lower()
@@ -152,17 +152,17 @@ class VerdiktContest(gl.Contract):
         old = contest.status
         contest.status = "CLOSED"
         self._append_log(contest, old, "CLOSED", now)
-        self.contests[cid] = contest
+        self.contests[str(int(cid))] = contest
         return self._contest_view(contest)
     @gl.public.write
     def judge_entry(self, entry_id: int) -> typing.Any:
         eid = u64(int(entry_id))
-        if eid not in self.entries:
+        if str(int(eid)) not in self.entries:
             raise gl.vm.UserError("[EXPECTED] Entry not found.")
-        entry = self.entries[eid]
+        entry = self.entries[str(int(eid))]
         if entry.status != "SUBMITTED" and entry.status != "APPEALED_REJUDGE":
             raise gl.vm.UserError("[EXPECTED] Entry is not awaiting judging.")
-        contest = self.contests[entry.contest_id]
+        contest = self.contests[str(int(entry.contest_id))]
         if contest.status != "CLOSED" and contest.status != "JUDGING":
             raise gl.vm.UserError("[EXPECTED] Contest is not in judging phase. Close entries first.")
         caller = str(gl.message.sender_address).strip().lower()
@@ -195,8 +195,8 @@ class VerdiktContest(gl.Contract):
             entry.accessible = u64(0)
             entry.status = "UNSCORABLE"
         entry.last_judged_at = u64(now)
-        self.entries[eid] = entry
-        contest = self.contests[entry.contest_id]
+        self.entries[str(int(eid))] = entry
+        contest = self.contests[str(int(entry.contest_id))]
         if contest.status == "CLOSED":
             self._append_log(contest, "CLOSED", "JUDGING", now)
             contest.status = "JUDGING"
@@ -204,14 +204,14 @@ class VerdiktContest(gl.Contract):
         if int(contest.scored_count) >= int(contest.entry_count) and int(contest.entry_count) > 0:
             self._append_log(contest, contest.status, "SCORED", now)
             contest.status = "SCORED"
-        self.contests[contest.cid] = contest
-        return self._entry_view(self.entries[eid])
+        self.contests[str(int(contest.cid))] = contest
+        return self._entry_view(self.entries[str(int(eid))])
     @gl.public.write
     def resubmit_entry(self, entry_id: int, new_url: str) -> typing.Any:
         eid = u64(int(entry_id))
-        if eid not in self.entries:
+        if str(int(eid)) not in self.entries:
             raise gl.vm.UserError("[EXPECTED] Entry not found.")
-        entry = self.entries[eid]
+        entry = self.entries[str(int(eid))]
         if entry.status != "UNSCORABLE":
             raise gl.vm.UserError("[EXPECTED] Only unscorable entries can be resubmitted.")
         if int(entry.resubmissions) >= 1:
@@ -227,21 +227,21 @@ class VerdiktContest(gl.Contract):
         entry.reasons_json = json.dumps({})
         entry.total_x100 = u64(0)
         entry.accessible = u64(1)
-        self.entries[eid] = entry
-        contest = self.contests[entry.contest_id]
+        self.entries[str(int(eid))] = entry
+        contest = self.contests[str(int(entry.contest_id))]
         contest.scored_count = u64(int(contest.scored_count) - 1)
         if contest.status == "SCORED":
             now = self._now()
             self._append_log(contest, "SCORED", "JUDGING", now)
             contest.status = "JUDGING"
-        self.contests[contest.cid] = contest
+        self.contests[str(int(contest.cid))] = contest
         return self._entry_view(entry)
     @gl.public.write
     def finalize(self, contest_id: int) -> typing.Any:
         cid = u64(int(contest_id))
-        if cid not in self.contests:
+        if str(int(cid)) not in self.contests:
             raise gl.vm.UserError("[EXPECTED] Contest not found.")
-        contest = self.contests[cid]
+        contest = self.contests[str(int(cid))]
         if contest.status != "SCORED":
             raise gl.vm.UserError("[EXPECTED] All entries must be scored first.")
         if self._count_pending(contest.cid) > 0:
@@ -253,15 +253,15 @@ class VerdiktContest(gl.Contract):
         contest.status = "FINALIZED"
         contest.winner_entry_id = u64(winner)
         contest.appeal_deadline = u64(now + 3 * 24 * 3600)
-        self.contests[cid] = contest
+        self.contests[str(int(cid))] = contest
         return self._contest_view(contest)
     @gl.public.write.payable
     def appeal(self, entry_id: int) -> typing.Any:
         eid = u64(int(entry_id))
-        if eid not in self.entries:
+        if str(int(eid)) not in self.entries:
             raise gl.vm.UserError("[EXPECTED] Entry not found.")
-        entry = self.entries[eid]
-        contest = self.contests[entry.contest_id]
+        entry = self.entries[str(int(eid))]
+        contest = self.contests[str(int(entry.contest_id))]
         if contest.status != "FINALIZED":
             raise gl.vm.UserError("[EXPECTED] Appeals are only open after finalization.")
         now = self._now()
@@ -323,20 +323,20 @@ class VerdiktContest(gl.Contract):
             entry.total_x100 = u64(0)
             entry.accessible = u64(0)
             entry.status = "UNSCORABLE"
-        self.entries[eid] = entry
+        self.entries[str(int(eid))] = entry
         if changed:
             self._pay_to(caller, bond)
             winner = self._compute_winner(contest.cid, criteria)
-            contest = self.contests[contest.cid]
+            contest = self.contests[str(int(contest.cid))]
             contest.winner_entry_id = u64(winner)
-            self.contests[contest.cid] = contest
-        return {"changed": changed, "entry": self._entry_view(self.entries[eid]), "bond_refunded": changed}
+            self.contests[str(int(contest.cid))] = contest
+        return {"changed": changed, "entry": self._entry_view(self.entries[str(int(eid))]), "bond_refunded": changed}
     @gl.public.write
     def claim_prize(self, contest_id: int) -> typing.Any:
         cid = u64(int(contest_id))
-        if cid not in self.contests:
+        if str(int(cid)) not in self.contests:
             raise gl.vm.UserError("[EXPECTED] Contest not found.")
-        contest = self.contests[cid]
+        contest = self.contests[str(int(cid))]
         if contest.status != "FINALIZED":
             raise gl.vm.UserError("[EXPECTED] Contest is not finalized.")
         now = self._now()
@@ -355,9 +355,9 @@ class VerdiktContest(gl.Contract):
             contest.prize_claimed = u64(1)
             self._append_log(contest, "FINALIZED", "PAID", now)
             contest.status = "PAID"
-            self.contests[cid] = contest
+            self.contests[str(int(cid))] = contest
             return {"paid_to": contest.organizer, "amount_wei": int(amount), "refunded": True, "contest": self._contest_view(contest)}
-        winner = self.entries[u64(int(contest.winner_entry_id))]
+        winner = self.entries[str(int(contest.winner_entry_id))]
         if caller != winner.creator and caller != contest.organizer:
             raise gl.vm.UserError("[EXPECTED] Only the winner or organizer can claim.")
         amount = contest.prize_wei
@@ -367,14 +367,14 @@ class VerdiktContest(gl.Contract):
         contest.prize_claimed = u64(1)
         self._append_log(contest, "FINALIZED", "PAID", now)
         contest.status = "PAID"
-        self.contests[cid] = contest
+        self.contests[str(int(cid))] = contest
         return {"paid_to": winner.creator, "amount_wei": int(amount), "refunded": False, "contest": self._contest_view(contest)}
     @gl.public.write
     def cancel_contest(self, contest_id: int) -> typing.Any:
         cid = u64(int(contest_id))
-        if cid not in self.contests:
+        if str(int(cid)) not in self.contests:
             raise gl.vm.UserError("[EXPECTED] Contest not found.")
-        contest = self.contests[cid]
+        contest = self.contests[str(int(cid))]
         if contest.status != "OPEN" and contest.status != "CLOSED":
             raise gl.vm.UserError("[EXPECTED] Only open contests can be cancelled.")
         if int(contest.entry_count) > 0:
@@ -388,14 +388,14 @@ class VerdiktContest(gl.Contract):
         now = self._now()
         self._append_log(contest, contest.status, "CANCELLED", now)
         contest.status = "CANCELLED"
-        self.contests[cid] = contest
+        self.contests[str(int(cid))] = contest
         return self._contest_view(contest)
     @gl.public.view
     def get_contest(self, contest_id: int) -> typing.Any:
         cid = u64(int(contest_id))
-        if cid not in self.contests:
+        if str(int(cid)) not in self.contests:
             raise gl.vm.UserError("[EXPECTED] Contest not found.")
-        return self._contest_view(self.contests[cid])
+        return self._contest_view(self.contests[str(int(cid))])
     @gl.public.view
     def list_contests(self, status_filter: str, offset: int, limit: int) -> typing.Any:
         f = str(status_filter).strip().upper()
@@ -411,7 +411,7 @@ class VerdiktContest(gl.Contract):
         skipped = 0
         added = 0
         while idx >= 1:
-            c = self.contests[u64(idx)]
+            c = self.contests[str(idx)]
             match = True
             if f != "" and f != "ALL":
                 if c.status != f:
@@ -428,13 +428,13 @@ class VerdiktContest(gl.Contract):
     @gl.public.view
     def get_entries(self, contest_id: int) -> typing.Any:
         cid = u64(int(contest_id))
-        if cid not in self.contests:
+        if str(int(cid)) not in self.contests:
             raise gl.vm.UserError("[EXPECTED] Contest not found.")
         out = []
         total = int(self.entry_count)
         idx = 1
         while idx <= total:
-            e = self.entries[u64(idx)]
+            e = self.entries[str(idx)]
             if int(e.contest_id) == int(cid):
                 out.append(self._entry_view(e))
             idx += 1
@@ -442,9 +442,9 @@ class VerdiktContest(gl.Contract):
     @gl.public.view
     def get_entry(self, entry_id: int) -> typing.Any:
         eid = u64(int(entry_id))
-        if eid not in self.entries:
+        if str(int(eid)) not in self.entries:
             raise gl.vm.UserError("[EXPECTED] Entry not found.")
-        return self._entry_view(self.entries[eid])
+        return self._entry_view(self.entries[str(int(eid))])
     @gl.public.view
     def list_by_organizer(self, organizer: str) -> typing.Any:
         who = str(organizer).strip().lower()
@@ -452,7 +452,7 @@ class VerdiktContest(gl.Contract):
         total = int(self.contest_count)
         idx = 1
         while idx <= total:
-            c = self.contests[u64(idx)]
+            c = self.contests[str(idx)]
             if c.organizer == who:
                 out.append(self._contest_view(c))
             idx += 1
@@ -464,7 +464,7 @@ class VerdiktContest(gl.Contract):
         total = int(self.entry_count)
         idx = 1
         while idx <= total:
-            e = self.entries[u64(idx)]
+            e = self.entries[str(idx)]
             if e.creator == who:
                 out.append(self._entry_view(e))
             idx += 1
@@ -475,9 +475,9 @@ class VerdiktContest(gl.Contract):
     @gl.public.view
     def get_activity(self, contest_id: int) -> typing.Any:
         cid = u64(int(contest_id))
-        if cid not in self.contests:
+        if str(int(cid)) not in self.contests:
             raise gl.vm.UserError("[EXPECTED] Contest not found.")
-        return {"logs": json.loads(self.contests[cid].logs_json)}
+        return {"logs": json.loads(self.contests[str(int(cid))].logs_json)}
     def _score_entry(self, url: str, criteria: typing.Any) -> typing.Any:
         page = ""
         reachable = True
@@ -677,7 +677,7 @@ class VerdiktContest(gl.Contract):
         total = int(self.entry_count)
         idx = 1
         while idx <= total:
-            e = self.entries[u64(idx)]
+            e = self.entries[str(idx)]
             if int(e.contest_id) == int(cid) and e.status == "SCORED":
                 t = int(e.total_x100)
                 key = self._tiebreak_key(e, top_cid)
@@ -702,7 +702,7 @@ class VerdiktContest(gl.Contract):
         total = int(self.entry_count)
         idx = 1
         while idx <= total:
-            e = self.entries[u64(idx)]
+            e = self.entries[str(idx)]
             if int(e.contest_id) == int(cid) and (e.status == "SUBMITTED" or e.status == "APPEALED_REJUDGE"):
                 n += 1
             idx += 1
@@ -711,7 +711,7 @@ class VerdiktContest(gl.Contract):
         total = int(self.entry_count)
         idx = 1
         while idx <= total:
-            e = self.entries[u64(idx)]
+            e = self.entries[str(idx)]
             if int(e.contest_id) == int(cid) and e.creator == creator:
                 return True
             idx += 1
